@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { GenerateOpenApi } from '../commands/generateOpenApi';
 import extensionSettings from '../configuration/extensionSettings';
 import { ProjectStateServiceInstance } from '../services/projectStateService';
 import { getNonce } from '../util';
@@ -76,6 +77,10 @@ export default class InstallGuideWebView {
 
             case 'view-problems':
               vscode.commands.executeCommand('workbench.panel.markers.view.focus');
+              break;
+
+            case 'generate-openapi':
+              vscode.commands.executeCommand(GenerateOpenApi);
               break;
 
             default:

@@ -38,6 +38,7 @@ import { AppMapConfigWatcher } from './services/appMapConfigWatcher';
 import ProjectStateService, { ProjectStateServiceInstance } from './services/projectStateService';
 import { AppmapUptodateService } from './services/appmapUptodateService';
 import outOfDateTests from './commands/outOfDateTests';
+import generateOpenApi from './commands/generateOpenApi';
 
 export async function activate(context: vscode.ExtensionContext): Promise<AppMapService> {
   const workspaceServices = new WorkspaceServices(context);
@@ -191,6 +192,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<AppMap
     ContextMenu.register(context);
     projectPickerWebview(context, extensionState);
     OpenAppMapsWebview.register(context, appmapCollectionFile);
+    generateOpenApi(context);
 
     context.subscriptions.push(
       vscode.commands.registerCommand('appmap.findByName', async () => {
