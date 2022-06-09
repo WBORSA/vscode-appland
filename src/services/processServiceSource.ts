@@ -1,1 +1,3 @@
-export default class ProcessServiceSource {}
+export default class ProcessServiceSource {
+  constructor() {}
+}
