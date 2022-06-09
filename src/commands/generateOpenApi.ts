@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import DependencyInstaller from '../services/dependencyInstaller';
+import { ProcessOutputType } from '../services/nodeRunner';
 
 export const GenerateOpenApi = 'appmap.generateOpenApi';
 
@@ -34,12 +36,34 @@ export default async function generateOpenApi(context: vscode.ExtensionContext):
         }
       }
 
-      const document = await vscode.workspace.openTextDocument({
-        language: 'yaml',
-        content: '---\n#Insert OpenAPI here',
-      });
+      vscode.window.withProgress(
+        { location: vscode.ProgressLocation.Notification, title: 'Generating OpenAPI definitions' },
+        async () => {
+          if (!workspaceFolder) {
+            return;
+          }
 
-      vscode.window.showTextDocument(document, viewColumn);
+          const installer = new DependencyInstaller(context);
+          await installer.install('@appland/appmap');
+          const output = await installer.exec(
+            'appmap',
+            'openapi',
+            '-d',
+            workspaceFolder.uri.fsPath
+          );
+
+          console.log(output.log.map((line) => `[${line.type}] ${line.data}`).join('\n'));
+          const document = await vscode.workspace.openTextDocument({
+            language: 'yaml',
+            content: output.log
+              .filter((line) => line.type === ProcessOutputType.Stdout)
+              .map((line) => line.data)
+              .join('\n'),
+          });
+
+          vscode.window.showTextDocument(document, viewColumn);
+        }
+      );
     }
   );
 

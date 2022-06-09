@@ -1,14 +1,14 @@
 import { spawn } from 'child_process';
 import * as vscode from 'vscode';
 
-enum ProcessOutputType {
+export enum ProcessOutputType {
   Stdout,
   Stderr,
 }
 
-type ProcessOutputLog = { type: ProcessOutputType; data: string }[];
+export type ProcessOutputLog = { type: ProcessOutputType; data: string }[];
 
-type ProcessOutput = {
+export type ProcessOutput = {
   log: Readonly<ProcessOutputLog>;
   exitCode?: number;
   signal?: NodeJS.Signals;
@@ -17,10 +17,10 @@ type ProcessOutput = {
 export default class NodeRunner {
   protected nodePath: string = process.argv[0];
   protected additionalEnv: NodeJS.ProcessEnv = process.env;
-  protected additionalArgs: string[] = [];
+  protected additionalArgs: string[] = ['--experimental-modules'];
 
   constructor(protected readonly cwd?: string) {
-    const isElectronApp = Boolean(vscode.env.remoteName);
+    const isElectronApp = !vscode.env.remoteName;
     if (isElectronApp) {
       this.additionalEnv['ELECTRON_RUN_AS_NODE'] = 'true';
       this.additionalArgs.push('--ms-enable-electron-run-as-node');

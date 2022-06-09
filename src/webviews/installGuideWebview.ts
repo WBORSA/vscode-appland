@@ -80,7 +80,11 @@ export default class InstallGuideWebView {
               break;
 
             case 'generate-openapi':
-              vscode.commands.executeCommand(GenerateOpenApi);
+              vscode.commands.executeCommand(
+                GenerateOpenApi,
+                vscode.ViewColumn.Beside,
+                message.projectPath
+              );
               break;
 
             default:

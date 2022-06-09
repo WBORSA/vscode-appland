@@ -48,7 +48,7 @@ export default function mountInstallGuide() {
     });
 
     app.$on('generate-openapi', (projectPath) => {
-      messages.rpc('generate-openapi', projectPath);
+      messages.rpc('generate-openapi', { projectPath });
     });
 
     messages.on('page', ({ page }) => {
