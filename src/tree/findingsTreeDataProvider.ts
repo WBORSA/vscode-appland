@@ -4,7 +4,7 @@ import FindingsIndex from '../services/findingsIndex';
 import { ResolvedFinding } from '../services/resolvedFinding';
 import { Finding } from '@appland/scanner/built/cli';
 
-function getTreeName(finding: Finding) {
+function getTreeName(finding: Finding): string {
   return `${finding.ruleTitle}: ${finding.groupMessage || finding.message}, ${finding.stack[0]}`;
 }
 
