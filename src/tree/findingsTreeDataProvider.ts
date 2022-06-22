@@ -2,6 +2,11 @@ import { Event } from '@appland/models';
 import * as vscode from 'vscode';
 import FindingsIndex from '../services/findingsIndex';
 import { ResolvedFinding } from '../services/resolvedFinding';
+import { Finding } from '@appland/scanner/built/cli';
+
+function getTreeName(finding: Finding) {
+  return `${finding.ruleTitle}: ${finding.groupMessage || finding.message}, ${finding.stack[0]}`;
+}
 
 export class FindingsTreeDataProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<undefined>();
@@ -31,7 +36,7 @@ export class FindingsTreeDataProvider implements vscode.TreeDataProvider<vscode.
 
     return Object.values(uniqueFindings).map(
       (finding: ResolvedFinding): vscode.TreeItem => {
-        const item = new vscode.TreeItem(finding.finding.message);
+        const item = new vscode.TreeItem(getTreeName(finding.finding));
         item.id = finding.finding.hash;
         if (finding.problemLocation) {
           item.command = {
