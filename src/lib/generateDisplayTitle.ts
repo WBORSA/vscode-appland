@@ -6,9 +6,10 @@ export default (finding: ResolvedFinding): string => {
   const absPath = finding.problemLocation?.uri.path;
   const relPath = absPath ? vscode.workspace.asRelativePath(absPath) : '';
 
-  return `${finding.finding.ruleTitle}: ${finding.finding.groupMessage ||
-    finding.finding.message}, ${finding.finding.scope.path || relPath}:${finding.finding.scope
-    .lineno ||
-    finding.problemLocation?.range.start.line ||
-    ''}`;
+  const rule = finding.finding.ruleTitle;
+  const context = finding.finding.groupMessage || finding.finding.message;
+  const path = finding.finding.scope.path || relPath;
+  const lineno = finding.finding.scope.lineno || finding.problemLocation?.range.start.line || '';
+
+  return `${rule}: ${context}, ${path}:${lineno}`;
 };
