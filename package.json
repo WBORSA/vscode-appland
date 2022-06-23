@@ -231,6 +231,11 @@
         "view": "appmap.views.local",
         "contents": "Filter matched 0 results.\n[Apply a new filter](command:appmap.applyFilter)",
         "when": "appmap.initialized && appmap.hasData && appmap.numResults == 0"
+      },
+      {
+        "view": "appmap.views.findings",
+        "contents": "Issues found by runtime analysis of your code\n[Get Early Access](command:appmap.getEarlyAccess?%5B%22sidebar%22%5D)",
+        "when": "config.appMap.analysisBetaSignup && !config.appMap.findingsEnabled"
       }
     ],
     "views": {
@@ -249,9 +254,9 @@
         },
         {
           "id": "appmap.views.findings",
-          "name": "Findings",
-          "visibility": "collapsed",
-          "when": "config.appMap.findingsEnabled == true"
+          "name": "Runtime Analysis",
+          "visibility": "visible",
+          "when": "config.appMap.analysisBetaSignup == true || config.appMap.findingsEnabled == true"
         },
         {
           "id": "appmap.views.codeObjects",

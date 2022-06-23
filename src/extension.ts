@@ -1,7 +1,14 @@
 import * as vscode from 'vscode';
 
 import { AppMapTextEditorProvider } from './textEditor/appmapTextEditorProvider';
-import { Telemetry, DEBUG_EXCEPTION, TELEMETRY_ENABLED, PROJECT_OPEN } from './telemetry';
+import {
+  Telemetry,
+  DEBUG_EXCEPTION,
+  TELEMETRY_ENABLED,
+  PROJECT_OPEN,
+  CTA_VIEW,
+  CTA_DISMISS,
+} from './telemetry';
 import registerTrees from './tree';
 import AppMapCollectionFile from './services/appmapCollectionFile';
 import ContextMenu from './tree/contextMenu';
@@ -43,7 +50,9 @@ import appmapLinkProvider from './terminalLink/appmapLinkProvider';
 import { SourceFileWatcher } from './services/sourceFileWatcher';
 import assert from 'assert';
 import { initializeWorkspaceServices } from './services/workspaceServices';
-import betaSignup from './actions/betaSignup';
+import betaSignup, { CTA_EARLY_ACCESS_RT_ANALYSIS } from './actions/betaSignup';
+import getEarlyAccess from './commands/getEarlyAccess';
+import { NoopTreeDataProvider } from './tree/noopTreeDataProvider';
 
 export async function activate(context: vscode.ExtensionContext): Promise<AppMapService> {
   Telemetry.register(context);
@@ -82,6 +91,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<AppMap
     await workspaceServices.enroll(configWatcher);
 
     const findingsEnabled = extensionSettings.findingsEnabled();
+    const betaCtaEnabled = extensionSettings.analysisBetaSignupEnabled();
     const indexEnabled = findingsEnabled || extensionSettings.indexEnabled();
 
     if (indexEnabled) {
@@ -142,9 +152,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<AppMap
       findingsIndex = new FindingsIndex();
 
       const findingsDiagnosticsProvider = new FindingsDiagnosticsProvider(context);
-      findingsIndex.on('added', (uri: vscode.Uri, findings: ResolvedFinding[]) =>
-        findingsDiagnosticsProvider.updateFindings(uri, findings)
-      );
+      findingsIndex.on('added', (uri: vscode.Uri, findings: ResolvedFinding[]) => {
+        findingsDiagnosticsProvider.updateFindings(uri, findings);
+        vscode.commands.executeCommand('setContext', 'appmap.numFindings', findings.length);
+      });
       findingsIndex.on('removed', (uri: vscode.Uri) =>
         findingsDiagnosticsProvider.updateFindings(uri, [])
       );
@@ -177,6 +188,17 @@ export async function activate(context: vscode.ExtensionContext): Promise<AppMap
       }
       await workspaceServices.enroll(autoScannerService);
       await workspaceServices.enroll(findingWatcher);
+    } else if (betaCtaEnabled) {
+      const findingsTreeView = vscode.window.createTreeView('appmap.views.findings', {
+        treeDataProvider: new NoopTreeDataProvider(),
+      });
+      findingsTreeView.onDidChangeVisibility((e) => {
+        const telemetryEvent = e.visible ? CTA_VIEW : CTA_DISMISS;
+        Telemetry.sendEvent(telemetryEvent, {
+          id: CTA_EARLY_ACCESS_RT_ANALYSIS,
+          placement: 'sidebar',
+        });
+      });
     }
 
     const inspectEnabled = extensionSettings.inspectEnabled();
@@ -221,6 +243,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<AppMap
     projectPickerWebview(context, extensionState);
     OpenAppMapsWebview.register(context, appmapCollectionFile);
     betaSignup(extensionState, projectStates);
+    getEarlyAccess(context, extensionState);
 
     context.subscriptions.push(
       vscode.commands.registerCommand('appmap.findByName', async () => {
