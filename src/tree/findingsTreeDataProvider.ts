@@ -9,7 +9,10 @@ function getTreeName(finding: ResolvedFinding): string {
   const relPath = absPath ? vscode.workspace.asRelativePath(absPath) : '';
 
   return `${finding.finding.ruleTitle}: ${finding.finding.groupMessage ||
-    finding.finding.message}, ${relPath}:${finding.problemLocation?.range.start.line || ''}`;
+    finding.finding.message}, ${finding.finding.scope.path || relPath}:${finding.finding.scope
+    .lineno ||
+    finding.problemLocation?.range.start.line ||
+    ''}`;
 }
 
 export class FindingsTreeDataProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
