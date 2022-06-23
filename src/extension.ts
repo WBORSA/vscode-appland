@@ -43,6 +43,7 @@ import appmapLinkProvider from './terminalLink/appmapLinkProvider';
 import { SourceFileWatcher } from './services/sourceFileWatcher';
 import assert from 'assert';
 import { initializeWorkspaceServices } from './services/workspaceServices';
+import betaSignup from './actions/betaSignup';
 
 export async function activate(context: vscode.ExtensionContext): Promise<AppMapService> {
   Telemetry.register(context);
@@ -219,6 +220,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<AppMap
     ContextMenu.register(context);
     projectPickerWebview(context, extensionState);
     OpenAppMapsWebview.register(context, appmapCollectionFile);
+    betaSignup(extensionState, projectStates);
 
     context.subscriptions.push(
       vscode.commands.registerCommand('appmap.findByName', async () => {

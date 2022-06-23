@@ -89,3 +89,18 @@ export const COPY_INSTALL_COMMAND = new Event({
   name: 'copy_install_command',
   properties: [Properties.PROJECT_LANGUAGE],
 });
+
+export const CTA_VIEW = new Event({
+  name: 'cta:view',
+  properties: [Properties.CTA_ID, Properties.CTA_PLACEMENT],
+});
+
+export const CTA_DISMISS = new Event({
+  name: 'cta:dismiss',
+  properties: [Properties.CTA_ID, Properties.CTA_PLACEMENT],
+});
+
+export const CTA_INTERACT = new Event({
+  name: 'cta:interact',
+  properties: [Properties.CTA_ID, Properties.CTA_PLACEMENT],
+});

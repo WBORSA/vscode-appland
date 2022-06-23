@@ -5,7 +5,7 @@ import ExtensionState, { Keys } from '../configuration/extensionState';
 import { FileChangeEmitter } from './fileChangeEmitter';
 import FindingsIndex from './findingsIndex';
 import { ResolvedFinding } from './resolvedFinding';
-import { analyze, scoreValue } from '../analyzers';
+import { analyze, scoreValue, SCORE_VALUES } from '../analyzers';
 import ProjectMetadata from '../workspace/projectMetadata';
 import AppMapCollection from './appmapCollection';
 
@@ -96,6 +96,15 @@ export class ProjectStateServiceInstance implements WorkspaceServiceInstance {
       metadata.score !== undefined &&
       metadata.score >= 2 &&
       !(this.isAgentConfigured && this.hasRecordedAppMaps && metadata.analysisPerformed)
+    );
+  }
+
+  async supported(): Promise<boolean> {
+    const metadata = await this.metadata();
+    return (
+      (metadata.language?.score || 0) >= SCORE_VALUES.good &&
+      (metadata.webFramework?.score || 0) >= SCORE_VALUES.good &&
+      (metadata.testFramework?.score || 0) >= SCORE_VALUES.good
     );
   }
 

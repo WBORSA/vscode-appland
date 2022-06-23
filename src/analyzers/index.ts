@@ -4,7 +4,7 @@ import AppMapLoader from '../services/appmapLoader';
 import LanguageResolver from '../services/languageResolver';
 
 export type Score = 'bad' | 'ok' | 'good';
-const SCORE_VALUES = { bad: 0, ok: 1, good: 2 };
+export const SCORE_VALUES = { bad: 0, ok: 1, good: 2 };
 
 export function scoreValue(...scores: Score[]): number {
   return scores.reduce((s, x) => s + SCORE_VALUES[x], 0);

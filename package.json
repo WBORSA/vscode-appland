@@ -168,6 +168,10 @@
           "type": "boolean",
           "description": "Enable an experimental version of usage instructions"
         },
+        "appMap.analysisBetaSignup": {
+          "type": "boolean",
+          "description": "Enable prompts to sign up for the runtime analysis beta"
+        },
         "appMap.indexEnabled": {
           "type": "boolean",
           "description": "Enable AppMap indexer and code objects view (preview)"
