@@ -10,7 +10,11 @@ export default (finding: ResolvedFinding): string => {
   const context = finding.finding.groupMessage || finding.finding.message;
   const lineno = finding.problemLocation?.range.start.line;
 
+  // If rule and context are the same, only display one
+  const ruleAndContext = rule != context ? `${rule}: ${context}` : rule;
+
+  // Only display problemLocation if it exists
   const fullPathString = finding.problemLocation ? `, ${relPath}:${lineno}` : '';
 
-  return `${rule}: ${context}${fullPathString}`;
+  return `${ruleAndContext}${fullPathString}`;
 };
