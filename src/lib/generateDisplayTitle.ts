@@ -8,10 +8,9 @@ export default (finding: ResolvedFinding): string => {
 
   const rule = finding.finding.ruleTitle;
   const context = finding.finding.groupMessage || finding.finding.message;
-  const path = finding.finding.scope.path || relPath;
-  const lineno = finding.finding.scope.lineno || finding.problemLocation?.range.start.line;
+  const lineno = finding.problemLocation?.range.start.line;
 
-  const fullPathString = path && lineno ? `, ${path}:${lineno}` : '';
+  const fullPathString = finding.problemLocation ? `, ${relPath}:${lineno}` : '';
 
   return `${rule}: ${context}${fullPathString}`;
 };
