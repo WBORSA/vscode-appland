@@ -33,7 +33,9 @@ script:
   # being unable to connect to the bus
   - export DBUS_SYSTEM_BUS_ADDRESS='unix:path=/var/run/dbus/system_bus_socket'
   - export DBUS_SESSION_BUS_ADDRESS='unix:path=/var/run/dbus/system_bus_socket'
-  - yarn test
+  - export DISPLAY=':99.0'
+  - /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+  - yarn ts-node test/integrationTest.ts out/test/integration/extension.test.js
 
 deploy:
   - provider: script
